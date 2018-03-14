@@ -7,16 +7,26 @@ LEFT="<"
 RIGHT=">"
 EMAIL='@intuit.com'
 SPACE=" "
-NEWLINE="\n"
+NEWLINE="\r\n"
 COAUTHOREDBY='Co-authored-by: '
 
 COMMIT_STR=""
 
 for i in "${mobstersArr[@]}"
 do
-	COMMIT_STR=$COMMIT_STR$i$SPACE$LEFT$i$EMAIL$RIGHT$NEWLINE
+	COMMIT_STR="${COMMIT_STR}${COAUTHOREDBY}${i}${SPACE}${LEFT}${i}${EMAIL}${RIGHT}
+"
 done
 
 echo $COMMIT_STR
 
-git commit -v --author="$$COMMIT_STR"
+lastMessage=$(git log -1 --pretty=%B)
+echo $lastMessage
+
+export COMMIT_STR=$COMMIT_STR
+
+COMMIT_STR="${lastMessage}
+
+${COMMIT_STR}"
+
+git commit --amend -m "$COMMIT_STR"
